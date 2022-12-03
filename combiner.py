@@ -28,9 +28,9 @@ class Combiner:
 
             fileList = argv[1 : ]
 
-            #chunks holds blocks of dataframes read from CSVs
-            df = pd.DataFrame()
-            chunks = []
+            # write the csv headers through the program output
+            df = pd.DataFrame(columns = ['email_hash', 'category', 'filename'])
+            print(df.to_csv(index = False))
 
             for filePath in fileList : 
                 #get the file name from file path
@@ -39,16 +39,12 @@ class Combiner:
                 #since the files can be > 2GB, reading in chunks to prevent memory overflow
                 #could use Dask package here but not sure if the files are really that many/that huge to make parrellelism worth it(in smaller scale parrellelism costs performance)
                 for chunk in pd.read_csv(filePath, chunksize = 10 ** 6) :
-                    #adding the file name column and append each chunk to chunks
+                    
+                    #removing the unnecessory columns other than "email_hash" and "category"
+                    chunk = chunk.drop(columns = (colname for colname in chunk.columns if 'email_hash' != colname and  'category' != colname))
+                    #adding the file name column and write the chunk into the csv file through the program output
                     chunk['filename'] = fileName
-                    chunks.append(chunk)
-            
-            #combine chunks into a single dataframe
-            df = pd.concat(chunks, axis = 0, ignore_index = True)
-            #There was an additional index column and another empty column in the end, so I drop them here
-            df = df.iloc[:, 1 : -1]
-            #write the csv with given name in the command line argument
-            print(df.to_csv(index = False))
+                    print(chunk.to_csv(index = False, header = False))
 
             return
         
@@ -62,4 +58,3 @@ def main():
 if __name__ == '__main__' :
     main()
 
-    
