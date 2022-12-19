@@ -4,6 +4,7 @@ import sys
 import unittest
 from io import StringIO
 from combiner import Combiner
+import generatefixtures
 
 
 class TestCombiner(unittest.TestCase):
@@ -22,6 +23,7 @@ class TestCombiner(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         sys.stdout = cls.test_output
+        generatefixtures.main()
 
     @classmethod
     def tearDownClass(cls):
@@ -93,7 +95,7 @@ class TestCombiner(unittest.TestCase):
 
         df = pd.read_csv(self.test_output_path)
 
-        self.assertEqual(df.shape[0], df1.shape[0] + df2.shape[0] - 1)
+        self.assertEqual(df.shape[0], df1.shape[0] + df2.shape[0])
 
         
 if __name__ == '__main__':
