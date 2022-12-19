@@ -83,7 +83,7 @@ class TestCombiner(unittest.TestCase):
     def test_size(self):
 
         argv = [self.combiner_path, self.csvpath1, self.csvpath2]
-        self.combiner.combine_files(argv)
+        self.combiner.combineCSV(argv)
 
         self.test_output.write(self.output.getvalue())
         self.test_output.close()
